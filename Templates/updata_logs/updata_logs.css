@@ -1,0 +1,40 @@
+#Version{
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: center;
+}
+.ver_bord {
+  margin: 6px auto 18px auto;
+  width: 50%;
+  flex: 1;
+  padding: 8px 16px;
+  border: 1px #999 solid;
+  border-radius: 12px;
+  box-shadow: 3px 3px 3px #999;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.Ver {
+  margin-top: 16px;
+  margin-bottom: 6px;
+  margin-left: 2%;
+}
+
+.Data {
+  display: block;
+  align-self: flex-end;
+}
+
+.blue{
+  list-style-image: url(../../Public/img/RhodesIsland_blue.png);
+}
+.black{
+  list-style-image: url(../../Public/img/RhodesIsland.png);
+}
+li{
+  padding: 5px 0;
+}

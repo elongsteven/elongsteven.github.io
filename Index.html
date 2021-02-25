@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1">
+  <title>jade computed</title>
+  <!-- Vue支持，若环境不同请更换地址 -->
+  <script src="./Public/js/updata_page.js"></script>
+  <script src="./Public/Library/JQuery 3.5.1/jquery-3.5.1.js"></script>
+  <script src="./Public/Library/Vue/vue.js"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+  <!-- <link rel="stylesheet" href="./Public/Library/bootstrap-3.3.7-dist/css/bootstrap.css"> -->
+  <link rel="stylesheet" href="./Public/style/Index.css">
+  <style>
+
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <div class="bord">
+      <div class="checkedBlock">
+        <input type="checkbox" @change="checkedAll" v-model="Allchecked" />全选
+        <ul id="checkedUl">
+          <li v-for="data in jadeList" :key="data.id">
+            <input type="checkbox" v-model="jadeArr" @change="checked" :title="data.title" /> {{data.text}}
+            <select class="tran" v-show="data.text == 'extermination' " @change="changed" id="selecter">
+              <option class="tran" :value="exter[0]">{{exter[0]}}</option>
+              <option class="tran" :value="exter[1]">{{exter[1]}}</option>
+              <option class="tran" :value="exter[2]">{{exter[2]}}</option>
+              <option class="tran" :value="exter[3]">{{exter[3]}}</option>
+            </select>
+          </li>
+        </ul>
+        <!-- <p>{{ theSum() }}</p> -->
+        <!-- <p>day = {{ daySum }}</p>
+        <p>week = {{ weekSum }}</p> -->
+      </div>
+      <div class="day_time">
+        <div class="dateSeleter">
+          <div>选择日期：<input type="date" id="dataSel" v-model="dateSel" @change="dataSel" /></div>
+          <div>输入日期：<input type="number" class="date_" v-model="day" @input="Synthetic" /></div>
+        </div>
+        <hr /><div class="jade">计算结果：{{jade}}</div>
+        <input type="checkbox" v-model="TW_act" @change="thisWeek" /> 算入本周<br />
+        <input type="checkbox" v-model="TD_act" @change="thisDay" /> 算入今日
+      </div>
+    </div>
+
+    <a href="./Templates/updata_logs/updata_logs.html">查看更新日志</a>
+  </div>
+
+  <script>
+
+    var vm = new Vue({
+      el: "#app",
+      data: {
+        exter: [1200, 1600, 1700, 1800],
+        jadeList: [{
+          id: 0,
+          text: "extermination",
+          jade: 1200,
+          budget: "week",
+          title: "每周完成剿灭作战",
+        }, {
+          id: 1,
+          text: "Weekly mission",
+          jade: 500,
+          budget: "week",
+          title: "每周完成周任务",
+        }, {
+          id: 2,
+          text: "mission Every day",
+          jade: 100,
+          budget: "day",
+          title: "每天完成日常任务",
+        }, {
+          id: 3,
+          text: "month card",
+          jade: 200,
+          budget: "day",
+          title: "已购买月卡",
+        }],
+        Allchecked: false,  // 是否全选
+        RhodesIsland_n: './Public/img/RhodesIsland.png',
+        RhodesIsland_s: './Public/img/RhodesIsland_blue.png',
+        daySum: 0,          // 左侧日预算
+        weekSum: 0,         // 左侧周预算
+        jade: 0,            // 最终计算结果
+        jadeArr: [],        // 多选框选中项
+        dateSel: "",        // 日期选择器，双向数据绑定
+        today: "",          // 今天的日期缓存器
+        day: 0,             // 天数填写，双向数据绑定
+        week: 0,            // 周目数计算
+        TW_act: false,          // 是否算入当前周
+        week_itera: 0,      // 周迭代器
+        TD_act: false,           // 是否算入今天
+        day_itera: 0,        // 天迭代器
+      },
+      mounted() {
+        this.dateSel = this.todayComput();
+      },
+      methods: {
+        thisWeek() {
+          this.week_itera = Number(this.TW_act);
+          this.Synthetic()
+        },
+        thisDay() {
+          this.day_itera = Number(this.TD_act);
+          this.Synthetic()
+        },
+
+        Synthetic() {
+          this.Synthetic_pre()
+          this.dataSel_pre()
+          this.jade = this.weekSum * (this.week + this.week_itera) + this.daySum * (this.day + this.day_itera)
+        },
+
+        // 输入框触发 前置
+        Synthetic_pre() {
+          if (this.day == "" || this.day < 0) {
+            this.jade = 0
+          }
+          if (this.day < 0) {
+            this.jade = "过去的已经是过去式了，生活应当向前看";
+            this.day = 0;
+          }
+          var today = new Date();
+          var TodayMs = Date.parse(today)
+          var DateSum = (this.day * 24 * 3600 * 1000) + TodayMs;
+          var appointed = this.converter(DateSum);
+          console.log(appointed);
+          this.dateSel = appointed;
+        },
+
+        // 日期格式工厂
+        converter(date) {
+          var theDate = new Date(date);
+          var str = "";
+          str += theDate.getFullYear() + "-";
+          var month = theDate.getMonth() + 1;//返回值是 0（一月） 到 11（十二月） 之间的一个整数。
+          if (month < 10) {
+            str += "0";
+          }
+          str += month + "-";
+          var day = theDate.getDate();//返回值是 1 ~ 31 之间的一个整数
+          if (day < 10) {
+            str += "0";
+          }
+          str += day;
+          // 储存到data:{Today:"",}中
+          return str;
+        },
+        // 左侧预计算函数
+        theSum() {
+          var daysum = 0;   // 日预算
+          var weeksum = 0;  // 周预算
+          for (var i in this.jadeArr) {
+            if (this.jadeArr[i].budget == "day") {
+              daysum += this.jadeArr[i].jade
+            } else if (this.jadeArr[i].budget == "week") {
+              weeksum += this.jadeArr[i].jade
+            }
+          }
+          // return sum
+          this.daySum = daysum
+          this.weekSum = weeksum
+          // console.log("daySum", this.daySum);
+          // console.log("weekSum", this.weekSum);
+        },
+        // 全选触发器
+        checkedAll() {
+          // console.log(this.Allchecked, "变动了")
+          if (this.Allchecked) {
+            this.jadeArr = this.jadeList
+          } else {
+            this.jadeArr = []
+          }
+          this.theSum()
+          this.Synthetic()
+        },
+        // 单选触发器
+        checked() {
+          if (this.jadeArr.length === this.jadeList.length) {
+            this.Allchecked = true
+          } else {
+            this.Allchecked = false
+          }
+          this.theSum()
+          this.Synthetic()
+        },
+        // select标签改变，触发函数
+        changed() {
+          var E_jade = parseInt($("#selecter option:selected").val());
+          this.jadeList[0].jade = E_jade
+          this.theSum()
+          this.Synthetic()
+        },
+        // 日期选择器触发函数
+        dataSel() {
+          this.dataSel_pre()
+          this.Synthetic_pre()
+          this.jade = this.weekSum * this.week + this.daySum * this.day
+        },
+        // 日期选择器触发函数 前置
+        dataSel_pre() {
+          this.Today = this.todayComput(); // 当前日期 格式化
+          this.day = this.daysComputed(this.Today, this.dateSel); // 计算两个日期的时间差
+          var nowDate = new Date; // 当前日期
+          var n_weekDay = nowDate.getDay(); // 得知今天是星期几
+          // console.log("n_weekDay", n_weekDay);
+          /*
+            1. 计算当前星期距离下次周一的时间，设为a
+            2. Math.floor(拿整体时间 减去a 得出的结果再 除以7)+1，计算为"中间有几周会经过周一"，设为b
+            3. 1 + b 即是最终答案
+          */
+          if (n_weekDay == 0) { n_weekDay = 7; }
+          var a = 8 - n_weekDay;
+          // console.log("a =", a);
+
+          var b = Math.floor((this.day - a) / 7) + 1;
+          // console.log("b =", b);
+          this.week = b;
+
+          console.log("week =", this.week);
+        },
+        // 今天日期格式化
+        todayComput() {
+          var today = new Date();
+          var str = "";
+          str += today.getFullYear() + "-";
+          var month = today.getMonth() + 1;//返回值是 0（一月） 到 11（十二月） 之间的一个整数。
+          if (month < 10) {
+            str += "0";
+          }
+          str += month + "-";
+          var day = today.getDate();//返回值是 1 ~ 31 之间的一个整数
+          if (day < 10) {
+            str += "0";
+          }
+          str += day;
+          // 储存到data:{Today:"",}中
+          return str;
+        },
+        // 计算时间差（当前日期，选中日期）
+        daysComputed(date1, date2) {
+          //parse() 是 Date 的一个静态方法 , 所以应该使用 Date.parse() 来调用，而不是作为 Date 的实例方法。返回该日期距离 1970/1/1 午夜时间的毫秒数
+          date1 = Date.parse(date1);
+          date2 = Date.parse(date2);
+          //计算两个日期之间相差的毫秒数的绝对值
+          // var ms = Math.abs(date2 - date1);
+          /* 这里不能用绝对值 */
+          var ms = date2 - date1;
+          console.log("ms", ms);
+          //毫秒数除以一天的毫秒数,就得到了天数
+          var days = Math.floor(ms / (24 * 3600 * 1000));
+          return days;
+        },
+      },
+    })
+  </script>
+</body>
+
+</html>

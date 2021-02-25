@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1">
+  <title>UPDATA</title>
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <script src="../../Public/Library/Vue/vue.js"></script>
+  <script src="../../Public/Library/JQuery 3.5.1/jquery-3.5.1.js"></script>
+  <link rel="stylesheet" href="./updata_logs.css">
+</head>
+
+<body>
+  <div id="app">
+
+    <div id="Version">
+      <div v-for="(data,index) in updata" :key="index" class="ver_bord">
+        <div class="header">
+          <h2 class="Ver">{{data.ver}}</h2>
+          <code class="Data">{{data.data}}</code>
+        </div>
+        <hr />
+
+        <ul v-if="data.only == true" class="black">
+          <li v-for="item in data.list">{{item}}</li>
+        </ul>
+
+        <ul v-else v-for="item in data.list" class="blue">
+          <li>{{item.ul}}
+            <ul class="black">
+              <li v-for="value in item.li">{{value}}</li>
+            </ul>
+          </li>
+        </ul>
+
+      </div>
+    </div>
+    <a href="../../Index.html">返回计算</a>
+  </div>
+
+  <script>
+    var vm = new Vue({
+      el: "#app",
+      data: {
+        updata: []
+      },
+      mounted() {
+        $.ajax({
+          type: 'get',
+          url: './updata.json',
+          dataType: 'json',
+          success: function (data) {
+            console.log(data.time)
+            $("#div").text(data.time)
+          }
+        })
+      },
+    })
+  </script>
+</body>
+
+</html>
+https://raw.githubusercontent.com/elongsteven/arknightstools/master/data/updata.json

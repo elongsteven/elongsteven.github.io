@@ -1,0 +1,44 @@
+.bord {
+  display: flex;
+  padding: 16px;
+  border: 1px #999 solid;
+  border-radius: 16px 2px;
+  box-shadow: 3px 3px 3px #999;
+}
+
+.date_ {
+  width: 100px;
+}
+
+.day_time {
+  padding: 10px;
+  margin: 6px;
+  border: 1px #bbb solid;
+  border-radius: 16px 2px;
+  flex: 1;
+}
+
+.checkedBlock {
+  padding: 10px;
+  margin: 6px;
+  border: 1px #bbb solid;
+  border-radius: 16px 2px;
+  flex: 1;
+}
+
+#checkedUl li {
+  list-style-image: url(../img/RhodesIsland.png);
+}
+
+.tran {
+  transition: all .6s;
+}
+
+.dateSeleter {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+}
+.jade{
+  float: right;
+}
